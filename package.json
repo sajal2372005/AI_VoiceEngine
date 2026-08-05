@@ -1,0 +1,26 @@
+{
+  "name": "voice-ai",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@cartesia/cartesia-js": "^3.2.0",
+    "@deepgram/sdk": "^3.9.0",
+    "@google/genai": "^2.7.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "google-tts-api": "^2.0.2",
+    "mammoth": "^1.12.0",
+    "multer": "^2.2.0",
+    "openai": "^6.41.0",
+    "pdf-parse": "^1.1.4",
+    "ws": "^8.21.0"
+  }
+}
