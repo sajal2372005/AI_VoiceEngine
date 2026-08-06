@@ -5,12 +5,23 @@ import SettingsPanel from './components/SettingsPanel.jsx';
 import ControlRow from './components/ControlRow.jsx';
 import TextEntry from './components/TextEntry.jsx';
 import KnowledgeUpload from './components/KnowledgeUpload.jsx';
+
+// SERVER_HOST must be a bare hostname only (e.g. "api.aivoiceengine.live"),
+// no protocol prefix, no trailing slash.
 const SERVER_HOST = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SERVER_HOST) || window.location.hostname;
-const SERVER_PORT = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SERVER_PORT) || '5000';
+
+// Only append an explicit port if VITE_SERVER_PORT is set. In production, behind
+// an nginx TLS proxy on 443, this should be left unset so wss:// naturally uses 443.
+const SERVER_PORT = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SERVER_PORT) || '';
+const PORT_SUFFIX = SERVER_PORT ? `:${SERVER_PORT}` : '';
+
 const WS_PROTOCOL = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 const HTTP_PROTOCOL = window.location.protocol === 'https:' ? 'https:' : 'http:';
-const WS_URL = `${WS_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT}`;
-const API_BASE_URL = `${SERVER_HOST}`;
+
+const WS_URL = `${WS_PROTOCOL}//${SERVER_HOST}${PORT_SUFFIX}`;
+// 🚀 FIX: this was missing the protocol prefix entirely, causing fetch() calls
+// built from it to be treated as relative paths against the frontend's own origin.
+const API_BASE_URL = `${HTTP_PROTOCOL}//${SERVER_HOST}${PORT_SUFFIX}`;
 
 function pickSupportedMimeType() {
   const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
