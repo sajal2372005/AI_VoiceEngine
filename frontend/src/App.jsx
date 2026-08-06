@@ -10,7 +10,7 @@ const SERVER_PORT = (typeof import.meta !== 'undefined' && import.meta.env?.VITE
 const WS_PROTOCOL = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 const HTTP_PROTOCOL = window.location.protocol === 'https:' ? 'https:' : 'http:';
 const WS_URL = `${WS_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT}`;
-const API_BASE_URL = `${HTTP_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT}`;
+const API_BASE_URL = `${HTTP_PROTOCOL}//${SERVER_HOST}`;
 
 function pickSupportedMimeType() {
   const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
