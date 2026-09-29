@@ -6,11 +6,11 @@ import { createClient, LiveTranscriptionEvents } from '@deepgram/sdk';
 import multer from 'multer';
 import pdfParse from 'pdf-parse';
 import mammoth from 'mammoth';
+import cors from 'cors';
 
 // Load environment variables
 dotenv.config();
 const app = express();
-const cors = require('cors');
 app.use(cors({
   origin: '*',
   credentials: true
