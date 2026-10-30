@@ -6,15 +6,12 @@ import { createClient, LiveTranscriptionEvents } from '@deepgram/sdk';
 import multer from 'multer';
 import pdfParse from 'pdf-parse';
 import mammoth from 'mammoth';
+import cors from 'cors';
 
 // Load environment variables
 dotenv.config();
 const app = express();
-const cors = require('cors');
-app.use(cors({
-  origin: '*',
-  credentials: true
-}));
+
 const PORT = process.env.PORT || 5000;
 
 // --- 🔑 STARTUP ENV CHECK (warn loudly instead of crashing deep inside a request later) ---
@@ -31,8 +28,8 @@ const deepgram = createClient(process.env.DEEPGRAM_API_KEY || '');
 
 // Define strictly allowed Gemini models to prevent crashes when switching via UI
 const VALID_GEMINI_MODELS = [
-  'gemini-2.5-flash',
-  'gemini-2.5-flash-lite'
+   'gemini-3.5-flash-lite',
+   'gemini-2.5-flash'
 ];
 
 // --- 🌐 MIDDLEWARE ---
@@ -203,10 +200,13 @@ STRICT INTERNAL KNOWLEDGE BASE: ${activeKnowledgeBase}`;
     if (ws.conversationHistory.length > 20) {
       ws.conversationHistory = ws.conversationHistory.slice(ws.conversationHistory.length - 20);
     }
+	while (ws.conversationHistory.length && ws.conversationHistory[0].role !== 'user') {
+  		ws.conversationHistory.shift();
 
+	}
     // 🚀 5. Pass the entire history array instead of a single string
     const responseStream = await ai.models.generateContentStream({
-      model: VALID_GEMINI_MODELS.includes(config.llmModel) ? config.llmModel : 'gemini-2.5-flash-lite',
+      model: VALID_GEMINI_MODELS.includes(config.llmModel) ? config.llmModel : 'gemini-3.5-flash-lite',
       contents: ws.conversationHistory, // Passes full memory to Gemini
       config: {
         systemInstruction: systemPrompt // Separates persona rules from chat memory
@@ -310,7 +310,7 @@ wss.on('connection', (ws) => {
   // Strict Default Configurations
   ws.clientConfig = {
     language: 'en-US',
-    llmModel: 'gemini-2.5-flash-lite',
+    llmModel: 'gemini-3.5-flash-lite',
     sarvamSpeaker: 'shreya'
   };
 
@@ -454,7 +454,6 @@ wss.on('connection', (ws) => {
   // Instant connection greeting
   const welcomeMessage = "Hello! I'm your AI assistant. How can I help you today?";
   generateAndStreamTTS(welcomeMessage, ws, ws.clientConfig);
-  ws.conversationHistory.push({ role: 'model', parts: [{ text: welcomeMessage }] });
 
   // Incoming WebSocket messages handler
   ws.on('message', async (message, isBinary) => {
